@@ -1,0 +1,12 @@
+# Fichiers régénérables (python tools/... les recrée)
+build/
+renders/preview/
+*.blend1
+__pycache__/
+# Dépôts et exemples tiers téléchargés pour la recherche (licences variées)
+research/repos/
+research/samples/
+# Sorties de compilation MSFS (créées sur le PC Windows)
+package/Packages/
+package/PackagesMetadata/
+package/_PackageInt/

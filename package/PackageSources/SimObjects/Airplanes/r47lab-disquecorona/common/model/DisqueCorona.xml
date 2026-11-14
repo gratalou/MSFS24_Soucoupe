@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Généré par tools/export_msfs.py : ne pas modifier à la main. -->
+<ModelInfo guid="{1948e66a-6950-5e8f-a513-ffc1bb45336e}" version="1.1">
+	<LODS>
+		<LOD minSize="0" ModelFile="DisqueCorona_LOD0.gltf"/>
+	</LODS>
+	<Animation name="c_gear" guid="E2E339A6-FCBF-43a9-A780-3473E03AB54B" length="100" type="Sim" typeParam2="c_gear" typeParam="AutoPlay" />
+	<Animation name="l_gear" guid="E6A307E6-D0D8-4ca0-8A8E-77B7EA22FFB9" length="100" type="Sim" typeParam2="l_gear" typeParam="AutoPlay" />
+	<Animation name="r_gear" guid="77C00B94-DDA1-450a-B725-1E2B4ADF6BC8" length="100" type="Sim" typeParam2="r_gear" typeParam="AutoPlay" />
+	<PartInfo>
+		<Name>c_gear</Name>
+		<AnimLength>100</AnimLength>
+		<Animation>
+			<Parameter>
+				<Sim>
+					<Variable>GEAR ANIMATION POSITION:0</Variable>
+					<Units>number</Units>
+					<Scale>100</Scale>
+					<Bias>0</Bias>
+				</Sim>
+			</Parameter>
+		</Animation>
+	</PartInfo>
+	<PartInfo>
+		<Name>l_gear</Name>
+		<AnimLength>100</AnimLength>
+		<Animation>
+			<Parameter>
+				<Sim>
+					<Variable>GEAR ANIMATION POSITION:1</Variable>
+					<Units>number</Units>
+					<Scale>100</Scale>
+					<Bias>0</Bias>
+				</Sim>
+			</Parameter>
+		</Animation>
+	</PartInfo>
+	<PartInfo>
+		<Name>r_gear</Name>
+		<AnimLength>100</AnimLength>
+		<Animation>
+			<Parameter>
+				<Sim>
+					<Variable>GEAR ANIMATION POSITION:2</Variable>
+					<Units>number</Units>
+					<Scale>100</Scale>
+					<Bias>0</Bias>
+				</Sim>
+			</Parameter>
+		</Animation>
+	</PartInfo>
+</ModelInfo>

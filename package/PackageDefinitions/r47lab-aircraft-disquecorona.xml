@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetPackage Version="0.1.0">
+	<ItemSettings>
+		<ContentType>AIRCRAFT</ContentType>
+		<Title>Disque Corona R-47</Title>
+		<Manufacturer>Hangar 9</Manufacturer>
+		<Creator>R-47 Lab</Creator>
+	</ItemSettings>
+	<Flags>
+		<VisibleInStore>false</VisibleInStore>
+		<CanBeReferenced>true</CanBeReferenced>
+	</Flags>
+	<PackageOrderHint>CUSTOM_SIMOBJECTS</PackageOrderHint>
+	<AssetGroups>
+		<AssetGroup Name="ContentInfo">
+			<Type>Copy</Type>
+			<Flags>
+				<FSXCompatibility>false</FSXCompatibility>
+			</Flags>
+			<AssetDir>PackageDefinitions\r47lab-aircraft-disquecorona\ContentInfo</AssetDir>
+			<OutputDir>ContentInfo\r47lab-aircraft-disquecorona\</OutputDir>
+		</AssetGroup>
+		<AssetGroup Name="r47lab-disquecorona">
+			<Type>ModularSimObject</Type>
+			<Flags>
+				<FSXCompatibility>false</FSXCompatibility>
+			</Flags>
+			<AssetDir>PackageSources\SimObjects\Airplanes\r47lab-disquecorona\</AssetDir>
+			<OutputDir>SimObjects\Airplanes\r47lab-disquecorona\</OutputDir>
+		</AssetGroup>
+	</AssetGroups>
+</AssetPackage>

@@ -1,0 +1,1318 @@
+<title>Disque Corona</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Special+Elite&family=Caveat:wght@500&display=swap">
+<style>
+/* Layout : nuit du désert du Nouveau-Mexique. Une colonne de dossier technique, planches dessinées en traits clairs, accent violet des glyphes. */
+:root {
+  --night: #0c0f1d;
+  --panel: #141a2e;
+  --line: #2a3254;
+  --fg: #e7e9f3;
+  --muted: #9ba2bf;
+  --glyph: #b896ff;
+  --glyph-dim: #6d58a8;
+  --amber: #e8b45c;
+  --paper: #e9e1cf;
+  --ink: #2a2520;
+  --stamp: #b3362c;
+  --pencil: #2f4a8a;
+  --f-type: "Special Elite", "Courier New", Courier, monospace;
+  --f-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  --f-display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--night);
+  color: var(--fg);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 64px;
+}
+.wrap { max-width: 1080px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: 0.01em; }
+h1 { font-size: clamp(56px, 11vw, 120px); font-weight: 800; line-height: 0.9; text-transform: uppercase; }
+h2 { font-size: clamp(32px, 5vw, 46px); font-weight: 800; text-transform: uppercase; line-height: 1; }
+h3 { font-size: 22px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+p { margin: 0; max-width: 66ch; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--glyph); }
+.muted { color: var(--muted); }
+.mono { font-family: var(--f-mono); }
+
+/* Hero */
+.hero { display: grid; gap: 20px; padding-block: 48px 8px; }
+.hero .lede { font-size: 19px; color: var(--muted); }
+.hero .lede strong { color: var(--fg); font-weight: 500; }
+.stamp { display: inline-block; font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); border: 1.5px solid var(--amber); padding: 3px 10px; transform: rotate(-2deg); width: fit-content; }
+
+.viewer-box { position: relative; margin-top: 24px; border: 1px solid var(--line); background: radial-gradient(ellipse at 50% 35%, #1d2442 0%, var(--night) 70%); aspect-ratio: 16 / 9; max-width: 100%; overflow: hidden; }
+#viewer { position: absolute; inset: 0; cursor: grab; touch-action: pan-y; }
+#viewer:active { cursor: grabbing; }
+#viewer canvas { display: block; }
+.viewer-fallback[hidden] { display: none; }
+.viewer-fallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
+.viewer-ui { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; pointer-events: none; }
+.viewer-ui > * { pointer-events: auto; }
+.toggle { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg); background: rgba(12, 15, 29, 0.78); border: 1px solid var(--line); padding: 7px 12px; cursor: pointer; }
+.toggle[aria-pressed="true"] { border-color: var(--glyph); color: var(--glyph); }
+.toggle:focus-visible { outline: 2px solid var(--glyph); outline-offset: 2px; }
+.viewer-hint { margin-left: auto; font-family: var(--f-mono); font-size: 11px; color: var(--muted); background: rgba(12, 15, 29, 0.6); padding: 4px 8px; }
+.caption { font-family: var(--f-mono); font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+/* Sections */
+section { padding-top: 72px; display: grid; gap: 24px; }
+.sec-head { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 20px; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+.cols > * { min-width: 0; }
+
+/* Chronologie */
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.timeline li { display: grid; grid-template-columns: 112px 1fr; gap: 14px; }
+.timeline .date { font-family: var(--f-mono); font-size: 13px; color: var(--amber); padding-top: 2px; }
+.timeline p { font-size: 15px; }
+.note { font-size: 14px; color: var(--muted); border-left: 2px solid var(--amber); padding-left: 14px; }
+
+.principles { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.principles li { display: grid; gap: 2px; }
+.principles b { font-weight: 600; color: var(--fg); }
+.principles span { color: var(--muted); font-size: 15px; }
+
+/* Fiche technique */
+.spec { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.spec div { background: var(--night); padding: 14px 16px; display: grid; gap: 2px; }
+.spec dt { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.spec dd { margin: 0; font-family: var(--f-display); font-size: 30px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.spec dd small { font-family: var(--f-body); font-size: 13px; color: var(--muted); font-weight: 400; }
+
+/* Planches */
+.plate { border: 1px solid var(--line); background: var(--panel); padding: 16px; display: grid; gap: 10px; min-width: 0; }
+.plate-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: var(--f-mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.plate-head b { color: var(--fg); font-weight: 500; }
+.svg-scroll { overflow-x: auto; }
+.svg-scroll svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.svg-fit svg { display: block; width: 100%; height: auto; }
+svg text { font-family: var(--f-mono); }
+.plates-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+
+/* Matériaux */
+.swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+.swatch { display: grid; gap: 8px; }
+.swatch .chip { aspect-ratio: 4 / 3; border: 1px solid var(--line); max-width: 100%; }
+.swatch b { font-weight: 600; font-size: 15px; }
+.swatch span { font-size: 14px; color: var(--muted); }
+.chip-hull { background: linear-gradient(115deg, #7d8394 0%, #e5e8ef 28%, #a9aebb 46%, #d9c9ee 60%, #9aa0ae 74%, #eef0f5 100%); }
+.chip-dome { background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.55) 0 6%, transparent 18%), radial-gradient(circle at 50% 60%, #4a3b6e 0%, #1c1630 70%); }
+.chip-glyph { background: #0e0b18; position: relative; }
+.chip-bone { background: radial-gradient(ellipse at 50% 100%, rgba(184,150,255,0.25), transparent 60%), linear-gradient(180deg, #d8d3c8, #a9a49a); }
+.chip-emit { background: radial-gradient(circle at 50% 50%, #ffffff 0 8%, #d8c6ff 16%, #8a64ff 34%, #241a44 62%, #0c0f1d 80%); }
+.chip-glyph svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* Intérieur */
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: none; }
+.legend li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; font-size: 15px; }
+.legend .n { font-family: var(--f-mono); font-size: 12px; width: 24px; height: 24px; border: 1px solid var(--glyph); color: var(--glyph); display: grid; place-items: center; border-radius: 50%; }
+.legend b { font-weight: 600; }
+.legend span { color: var(--muted); }
+.ideas { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+.ideas div { display: grid; gap: 6px; align-content: start; }
+.ideas p { font-size: 15px; color: var(--muted); }
+
+/* Tables */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; background: var(--panel); }
+tr:last-child td { border-bottom: 0; }
+td.heli { font-family: var(--f-mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
+td.ufo { font-weight: 600; color: var(--glyph); white-space: nowrap; }
+td.who { font-size: 14px; color: var(--muted); }
+.tag { display: inline-block; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.tag.now { border-color: var(--glyph); color: var(--glyph); }
+
+.need { border: 1px solid var(--amber); padding: 18px 20px; display: grid; gap: 10px; }
+.need ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.need h3 { color: var(--amber); }
+
+.glyph-strip { display: flex; flex-wrap: wrap; gap: 10px; }
+.glyph-strip svg { width: 40px; height: 40px; }
+footer { margin-top: 72px; border-top: 1px solid var(--line); padding-top: 16px; font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+
+/* Tablette */
+.tablet { background: #05060c; border: 1px solid var(--line); border-radius: 26px; padding: 14px; box-shadow: 0 30px 60px -30px rgba(0,0,0,0.8); }
+.screen { display: grid; grid-template-columns: 250px 1fr; border-radius: 14px; overflow: hidden; background: var(--panel); min-height: 560px; }
+.screen > * { min-width: 0; }
+.efb-side { background: #10142a; border-right: 1px solid var(--line); padding: 18px 14px; display: grid; gap: 14px; align-content: start; }
+.efb-app { display: grid; gap: 2px; }
+.efb-app b { font-family: var(--f-display); font-size: 24px; letter-spacing: 0.04em; text-transform: uppercase; }
+.efb-app span { font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+.efb-progress { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.efb-progress i { display: block; height: 100%; width: 44%; background: var(--glyph); }
+.chapters { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.chapters li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; padding: 8px 8px; border-radius: 6px; font-size: 13px; line-height: 1.35; }
+.chapters li .k { font-family: var(--f-mono); font-size: 11px; color: var(--muted); padding-top: 1px; }
+.chapters li small { display: block; font-family: var(--f-mono); font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+.chapters li.read small { color: var(--glyph-dim); }
+.chapters li.cur { background: rgba(184,150,255,0.12); outline: 1px solid var(--glyph-dim); }
+.chapters li.cur small { color: var(--glyph); }
+.chapters li.locked { color: var(--muted); }
+.chapters li.locked small { color: var(--amber); opacity: 0.85; }
+.efb-page { background: #1a1f36; padding: 22px; overflow-x: auto; }
+.paper { background: var(--paper); color: var(--ink); font-family: var(--f-type); font-size: 14.5px; line-height: 1.65; padding: 34px 38px 40px; max-width: 640px; margin: 0 auto; position: relative; box-shadow: 0 2px 0 #cfc6b2, 0 10px 30px rgba(0,0,0,0.5); display: grid; gap: 14px; }
+.paper p { max-width: none; }
+.paper .ref { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 12px; border-bottom: 1px solid rgba(42,37,32,0.4); padding-bottom: 8px; }
+.paper h4 { margin: 0; font-family: var(--f-type); font-weight: 400; font-size: 18px; letter-spacing: 0.06em; text-transform: uppercase; }
+.paper .stamp2 { position: absolute; top: 58px; right: 26px; color: var(--stamp); border: 3px double var(--stamp); padding: 4px 10px; font-size: 13px; letter-spacing: 0.12em; transform: rotate(8deg); opacity: 0.8; text-transform: uppercase; text-align: center; line-height: 1.2; }
+.redact { background: var(--ink); color: var(--ink); padding: 0 2px; user-select: none; }
+.hand { font-family: var(--f-hand); color: var(--pencil); font-size: 21px; line-height: 1.15; }
+.hand.margin { border-left: 2px solid rgba(47,74,138,0.35); padding-left: 12px; transform: rotate(-1.2deg); }
+.paper .sketch { border: 1px dashed rgba(42,37,32,0.45); padding: 10px; display: grid; grid-template-columns: 120px 1fr; gap: 14px; align-items: center; font-size: 12.5px; }
+.paper .sketch svg { width: 100%; height: auto; }
+.story-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+.story-grid > div { display: grid; gap: 8px; align-content: start; }
+.story-grid p { font-size: 15px; color: var(--muted); }
+.cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cast li { font-size: 15px; }
+.cast b { font-weight: 600; }
+.cast span { color: var(--muted); }
+@media (max-width: 760px) {
+  .screen { grid-template-columns: 1fr; }
+  .efb-side { border-right: 0; border-bottom: 1px solid var(--line); }
+  .paper { padding: 24px 20px 28px; }
+  .paper .stamp2 { position: static; justify-self: end; }
+  .paper .sketch { grid-template-columns: 1fr; }
+}
+
+/* Rayon */
+.laser-lab { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+.laser-box { margin-top: 0; }
+#laserView { position: absolute; inset: 0; cursor: grab; touch-action: pan-y; }
+#laserView canvas { display: block; }
+.laser-read { position: absolute; top: 10px; left: 12px; font-family: var(--f-mono); font-size: 11px; color: var(--muted); background: rgba(12, 15, 29, 0.7); padding: 4px 8px; }
+.laser-panel { border: 1px solid var(--line); background: var(--panel); padding: 16px; display: grid; gap: 18px; }
+.ctl { display: grid; gap: 8px; }
+.ctl-l { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+.ctl-l output { color: var(--fg); font-variant-numeric: tabular-nums; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg .toggle { flex: 1 1 auto; }
+.swatch-btn { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--line); background: var(--c); cursor: pointer; padding: 0; }
+.swatch-btn[aria-pressed="true"] { border-color: var(--fg); box-shadow: 0 0 12px var(--c); }
+.swatch-btn:focus-visible { outline: 2px solid var(--glyph); outline-offset: 2px; }
+.laser-panel input[type="range"] { width: 100%; accent-color: var(--glyph); }
+@media (max-width: 860px) { .laser-lab { grid-template-columns: 1fr; } }
+
+.hud-switch { display: flex; gap: 6px; }
+.hudmock[data-mode="fr"] .gly { display: none; }
+.hudmock[data-mode="glyph"] .num, .hudmock[data-mode="glyph"] .lbl { display: none; }
+.hudmock text { font-family: var(--f-mono); }
+
+@media (max-width: 520px) {
+  .timeline li { grid-template-columns: 1fr; gap: 2px; }
+  .viewer-hint { display: none; }
+  .viewer-box { aspect-ratio: 4 / 3; }
+}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="eyebrow">Mod pour Microsoft Flight Simulator 2024 · Dossier de conception</span>
+  <h1>Disque<br>Corona</h1>
+  <span class="stamp">Type R-47 · Appareil imaginé</span>
+  <p class="lede">Une soucoupe de <strong>9,40 m</strong> inspirée des récits de Roswell (1947), pilotable dans le simulateur. On part du modèle de vol d'hélicoptère, avec <strong>des commandes renommées</strong> et <strong>un intérieur entièrement inventé</strong> qui reste cohérent.</p>
+
+  <div class="viewer-box">
+    <div id="viewer" aria-label="Aperçu 3D interactif de la soucoupe"></div>
+    <div class="viewer-fallback" id="viewer-fallback" hidden>L'aperçu 3D n'a pas pu démarrer sur cet appareil. Les plans ci-dessous montrent la même soucoupe.</div>
+    <div class="viewer-ui">
+      <button class="toggle" id="t-ring" aria-pressed="true" type="button">Couronne</button>
+      <button class="toggle" id="t-beam" aria-pressed="false" type="button">Faisceau ventral</button>
+      <button class="toggle" id="t-legs" aria-pressed="false" type="button">Pieds d'appui</button>
+      <span class="viewer-hint">Glisser pour tourner autour</span>
+    </div>
+  </div>
+  <p class="caption">Aperçu de principe : proportions et lumières réelles du projet, rendu simplifié. Le modèle du simulateur sera bien plus détaillé.</p>
+</header>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Recherche</span>
+    <h2>Ce que racontent les témoins de 1947</h2>
+  </div>
+  <div class="cols">
+    <div style="display:grid; gap:20px; align-content:start">
+      <ol class="timeline">
+        <li><span class="date">Juin 1947</span><p>Le rancher Mac Brazel trouve des débris éparpillés sur le ranch Foster, près de Corona (Nouveau-Mexique).</p></li>
+        <li><span class="date">8 juil. 1947</span><p>La base aérienne de Roswell annonce avoir récupéré un « disque volant ». Le soir même, le général Ramey parle d'un ballon météo.</p></li>
+        <li><span class="date">1978</span><p>Le major Jesse Marcel, qui avait ramassé les débris, décrit une feuille de métal très fine qui reprenait sa forme une fois froissée, et de petites poutres en I portant des symboles roses et violets.</p></li>
+        <li><span class="date">1994–1997</span><p>L'US Air Force publie deux rapports : les débris venaient d'un train de ballons du projet secret Mogul.</p></li>
+      </ol>
+      <p class="note">L'explication officielle reste le ballon Mogul. Notre soucoupe part du principe inverse, pour le jeu : on imagine l'appareil que décrivent les récits.</p>
+    </div>
+    <div style="display:grid; gap:16px; align-content:start">
+      <h3>Ce que le design en retient</h3>
+      <ul class="principles">
+        <li><b>Une coque sans jointure</b><span>Aucun rivet, aucune vis, aucune trappe visible quand elle est fermée. C'est ce qui rend l'appareil étrange.</span></li>
+        <li><b>Un métal à mémoire de forme</b><span>Gris argent brossé, avec un léger reflet irisé sous certains angles.</span></li>
+        <li><b>Des glyphes violets</b><span>Clin d'œil aux poutres décrites par Marcel : une bande de symboles gravés court sur le bord du disque.</span></li>
+        <li><b>Aucun moteur visible</b><span>Pas d'hélice ni de tuyère. La propulsion est suggérée par un émetteur sous le ventre et une couronne de lumières.</span></li>
+        <li><b>Une petite taille</b><span>Environ 9 m, conforme aux récits les plus courants. Assez petit pour se poser dans une clairière.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Fiche technique</span>
+    <h2>Le type R-47</h2>
+    <p class="muted">Valeurs de départ pour le simulateur. Les performances seront réglées pendant les essais en vol.</p>
+  </div>
+  <dl class="spec">
+    <div><dt>Diamètre</dt><dd>9,40 m</dd></div>
+    <div><dt>Hauteur</dt><dd>2,90 m <small>3,40 m pieds sortis</small></dd></div>
+    <div><dt>Masse à vide</dt><dd>2 850 kg</dd></div>
+    <div><dt>Masse maximale</dt><dd>3 600 kg</dd></div>
+    <div><dt>Occupants</dt><dd>1 + 2 <small>pilote et observateurs</small></dd></div>
+    <div><dt>Hauteur de cabine</dt><dd>1,95 m <small>au centre, 1,30 m au bord</small></dd></div>
+    <div><dt>Vitesse visée, phase 1</dt><dd>≈ 250 kt <small>limite du modèle hélico</small></dd></div>
+    <div><dt>Plafond visé</dt><dd>45 000 ft</dd></div>
+  </dl>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Planches</span>
+    <h2>Vues de l'appareil</h2>
+  </div>
+
+  <figure class="plate" style="margin:0">
+    <div class="plate-head"><b>Planche A · Élévation latérale</b><span>Échelle 1 : 100</span></div>
+    <div class="svg-scroll">
+      <svg viewBox="-20 0 1100 440" role="img" aria-label="Vue de profil de la soucoupe avec ses cotes">
+        <defs>
+          <linearGradient id="hullG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#e7e9f3" stop-opacity="0.16"/>
+            <stop offset="0.5" stop-color="#e7e9f3" stop-opacity="0.04"/>
+            <stop offset="1" stop-color="#b896ff" stop-opacity="0.10"/>
+          </linearGradient>
+          <linearGradient id="domeG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#b896ff" stop-opacity="0.35"/>
+            <stop offset="1" stop-color="#b896ff" stop-opacity="0.06"/>
+          </linearGradient>
+          <marker id="arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9ba2bf"/></marker>
+        </defs>
+        <line x1="-10" y1="362" x2="1010" y2="362" stroke="#2a3254" stroke-dasharray="6 6"/>
+        <!-- pieds -->
+        <g stroke="#9ba2bf" stroke-width="3" fill="none">
+          <line x1="500" y1="306" x2="500" y2="358"/>
+          <line x1="250" y1="285" x2="200" y2="358"/>
+          <line x1="750" y1="285" x2="800" y2="358"/>
+        </g>
+        <g fill="#9ba2bf"><rect x="480" y="356" width="40" height="5" rx="2"/><rect x="180" y="356" width="40" height="5" rx="2"/><rect x="780" y="356" width="40" height="5" rx="2"/></g>
+        <!-- coque -->
+        <path d="M30,220 C110,196 220,158 340,134 L660,134 C780,158 890,196 970,220 C890,252 770,296 610,308 Q500,314 390,308 C230,296 110,252 30,220 Z" fill="url(#hullG)" stroke="#e7e9f3" stroke-width="2"/>
+        <!-- dôme -->
+        <path d="M342,134 C348,70 420,22 500,20 C580,22 652,70 658,134 Z" fill="url(#domeG)" stroke="#b896ff" stroke-width="2"/>
+        <path d="M400,70 C430,44 470,34 500,33" stroke="#e7e9f3" stroke-opacity="0.5" stroke-width="2" fill="none"/>
+        <rect x="336" y="130" width="328" height="8" rx="3" fill="#2a3254" stroke="#9ba2bf"/>
+        <!-- bande de glyphes -->
+        <line x1="40" y1="220" x2="960" y2="220" stroke="#b896ff" stroke-width="5" stroke-opacity="0.35"/>
+        <g id="rimDots" fill="#e9dcff"></g>
+        <!-- émetteur ventral -->
+        <ellipse cx="500" cy="311" rx="80" ry="5" fill="#b896ff" opacity="0.9"/>
+        <ellipse cx="500" cy="318" rx="120" ry="10" fill="#b896ff" opacity="0.15"/>
+        <!-- cotes -->
+        <line x1="30" y1="398" x2="970" y2="398" stroke="#9ba2bf" marker-start="url(#arr)" marker-end="url(#arr)"/>
+        <line x1="30" y1="226" x2="30" y2="408" stroke="#2a3254"/><line x1="970" y1="226" x2="970" y2="408" stroke="#2a3254"/>
+        <text x="500" y="424" fill="#e7e9f3" font-size="16" text-anchor="middle">9,40 m</text>
+        <line x1="1010" y1="20" x2="1010" y2="312" stroke="#9ba2bf" marker-start="url(#arr)" marker-end="url(#arr)"/>
+        <line x1="664" y1="20" x2="1020" y2="20" stroke="#2a3254"/><line x1="620" y1="312" x2="1020" y2="312" stroke="#2a3254"/>
+        <text x="1022" y="172" fill="#e7e9f3" font-size="16">2,90 m</text>
+        <!-- légendes -->
+        <g font-size="13" fill="#e7e9f3">
+          <line x1="610" y1="60" x2="760" y2="60" stroke="#b896ff"/><text x="766" y="64">Dôme d'observation, verre fumé</text>
+          <line x1="250" y1="168" x2="120" y2="110" stroke="#9ba2bf"/><text x="10" y="102">Coque d'un seul tenant</text>
+          <line x1="880" y1="220" x2="900" y2="262" stroke="#b896ff"/><text x="820" y="280">Glyphes et 24 émetteurs</text>
+          <line x1="560" y1="314" x2="640" y2="340" stroke="#b896ff"/><text x="646" y="345">Émetteur ventral</text>
+          <line x1="215" y1="335" x2="120" y2="330" stroke="#9ba2bf"/><text x="10" y="334">Pieds (×3)</text>
+        </g>
+      </svg>
+    </div>
+  </figure>
+
+  <div class="plates-2">
+    <figure class="plate" style="margin:0">
+      <div class="plate-head"><b>Planche B · Vue de dessous</b><span>1 : 100</span></div>
+      <div class="svg-fit">
+        <svg viewBox="0 0 480 500" role="img" aria-label="Vue de dessous : anneaux, émetteur central, logements des pieds et trappe">
+          <defs>
+            <radialGradient id="emitG"><stop offset="0" stop-color="#ffffff"/><stop offset="0.35" stop-color="#d8c6ff"/><stop offset="1" stop-color="#8a64ff" stop-opacity="0"/></radialGradient>
+          </defs>
+          <circle cx="240" cy="250" r="212" fill="#e7e9f3" fill-opacity="0.04" stroke="#e7e9f3" stroke-width="2"/>
+          <circle cx="240" cy="250" r="203" fill="none" stroke="#b896ff" stroke-opacity="0.35" stroke-width="5"/>
+          <g id="underDots" fill="#e9dcff"></g>
+          <circle cx="240" cy="250" r="162" fill="none" stroke="#b896ff" stroke-opacity="0.45"/>
+          <circle cx="240" cy="250" r="117" fill="none" stroke="#b896ff" stroke-opacity="0.45"/>
+          <circle cx="240" cy="250" r="72" fill="none" stroke="#b896ff" stroke-opacity="0.45"/>
+          <circle cx="240" cy="250" r="60" fill="url(#emitG)"/>
+          <circle cx="240" cy="250" r="36" fill="none" stroke="#e7e9f3"/>
+          <g fill="#141a2e" stroke="#9ba2bf" stroke-width="1.5">
+            <rect x="226" y="113" width="28" height="44" rx="10"/>
+            <rect x="226" y="113" width="28" height="44" rx="10" transform="rotate(120 240 250)"/>
+            <rect x="226" y="113" width="28" height="44" rx="10" transform="rotate(240 240 250)"/>
+          </g>
+          <rect x="216" y="328" width="48" height="30" rx="6" fill="#141a2e" stroke="#e8b45c" stroke-dasharray="4 3"/>
+          <path d="M240,22 l-8,14 h16 z" fill="#9ba2bf"/>
+          <g font-size="12" fill="#e7e9f3">
+            <text x="240" y="16" text-anchor="middle" fill="#9ba2bf">AVANT</text>
+            <text x="240" y="490" text-anchor="middle" fill="#9ba2bf">Ø 9,40 m · émetteur Ø 1,60 m</text>
+            <text x="276" y="378" fill="#e8b45c">trappe</text>
+            <text x="262" y="138" fill="#9ba2bf">pied</text>
+          </g>
+        </svg>
+      </div>
+    </figure>
+
+    <div class="plate" style="align-content:start">
+      <div class="plate-head"><b>Alphabet de bord</b><span>Glyphes inventés</span></div>
+      <p class="muted" style="font-size:15px">Tous les textes de la soucoupe utiliseront ces symboles : sur la coque, sur les écrans et sur les commandes. Un <b style="color:var(--fg);font-weight:500">mode traduction</b> pourra afficher le français par-dessus, pour garder l'appareil pilotable.</p>
+      <div class="glyph-strip" id="glyphs" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Matériaux et lumières</span>
+    <h2>Palette de l'appareil</h2>
+  </div>
+  <div class="swatches">
+    <div class="swatch"><div class="chip chip-hull"></div><b>Alliage à mémoire</b><span>Coque extérieure. Métal brossé très réfléchissant, avec un léger reflet violet sous la lumière rasante.</span></div>
+    <div class="swatch"><div class="chip chip-dome"></div><b>Verre fumé</b><span>Dôme. Opaque de l'extérieur en plein jour, on devine la lueur du noyau la nuit.</span></div>
+    <div class="swatch"><div class="chip chip-glyph" id="chipGlyph"></div><b>Glyphes lumineux</b><span>Bande sur le bord et affichages intérieurs. Violet pâle, s'intensifie avec la puissance.</span></div>
+    <div class="swatch"><div class="chip chip-emit"></div><b>Émetteur ventral</b><span>Sa lueur suit la commande de champ. Il devient blanc à pleine puissance.</span></div>
+    <div class="swatch"><div class="chip chip-bone"></div><b>Céramique os</b><span>Intérieur. Matière mate et continue, sans angle vif, comme moulée d'une seule pièce.</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Intérieur imaginé</span>
+    <h2>Une cabine qui n'a pas été faite pour nous</h2>
+    <p class="muted">Tout est inventé, mais suit une logique : des occupants plus petits que nous (1,30 m environ), une technologie sans câbles ni boutons, une lumière qui vient des matériaux eux-mêmes.</p>
+  </div>
+  <div class="cols">
+    <figure class="plate" style="margin:0">
+      <div class="plate-head"><b>Planche C · Plan de cabine</b><span>Ø intérieur 5,20 m</span></div>
+      <div class="svg-fit">
+        <svg viewBox="0 0 440 450" role="img" aria-label="Plan de la cabine : noyau central, siège pilote, pupitre, sièges d'observation, trappe">
+          <defs>
+            <radialGradient id="coreG"><stop offset="0" stop-color="#ffffff"/><stop offset="0.4" stop-color="#b896ff"/><stop offset="1" stop-color="#b896ff" stop-opacity="0"/></radialGradient>
+          </defs>
+          <circle cx="220" cy="225" r="168" fill="none" stroke="#2a3254" stroke-width="10"/>
+          <circle cx="220" cy="225" r="158" fill="#d8d3c8" fill-opacity="0.05" stroke="#e7e9f3" stroke-width="1.5"/>
+          <!-- bande de vision -->
+          <path d="M 83.2 146 A 158 158 0 0 1 356.8 146" fill="none" stroke="#b896ff" stroke-width="6" stroke-dasharray="10 5"/>
+          <!-- niches -->
+          <path d="M 64 200 A 158 158 0 0 0 64 250" fill="none" stroke="#9ba2bf" stroke-width="12"/>
+          <path d="M 376 200 A 158 158 0 0 1 376 250" fill="none" stroke="#9ba2bf" stroke-width="12"/>
+          <!-- pupitre -->
+          <path d="M 148 128 A 125 125 0 0 1 292 128" fill="none" stroke="#e7e9f3" stroke-width="14" stroke-linecap="round" stroke-opacity="0.85"/>
+          <path d="M 152 124 A 125 125 0 0 1 288 124" fill="none" stroke="#b896ff" stroke-width="3" stroke-dasharray="3 6"/>
+          <!-- siège pilote -->
+          <path d="M196,150 q24,-14 48,0 l-4,34 q-20,10 -40,0 z" fill="#141a2e" stroke="#e7e9f3" stroke-width="1.5"/>
+          <ellipse cx="183" cy="150" rx="9" ry="13" fill="none" stroke="#b896ff" stroke-width="2"/>
+          <ellipse cx="257" cy="150" rx="9" ry="13" fill="none" stroke="#b896ff" stroke-width="2"/>
+          <!-- noyau -->
+          <circle cx="220" cy="225" r="40" fill="url(#coreG)"/>
+          <circle cx="220" cy="225" r="24" fill="none" stroke="#e7e9f3"/>
+          <!-- observateurs -->
+          <g fill="#141a2e" stroke="#9ba2bf" stroke-width="1.5">
+            <path d="M0,-14 q16,-8 30,4 l-8,22 q-14,4 -24,-6 z" transform="translate(118 280) rotate(30)"/>
+            <path d="M0,-14 q16,-8 30,4 l-8,22 q-14,4 -24,-6 z" transform="translate(300 300) rotate(-30) scale(-1 1)"/>
+          </g>
+          <!-- trappe -->
+          <rect x="196" y="318" width="48" height="36" rx="6" fill="none" stroke="#e8b45c" stroke-dasharray="4 3"/>
+          <g stroke="#e8b45c" stroke-opacity="0.6"><line x1="204" y1="328" x2="236" y2="328"/><line x1="204" y1="336" x2="236" y2="336"/><line x1="204" y1="344" x2="236" y2="344"/></g>
+          <path d="M220,40 l-8,14 h16 z" fill="#9ba2bf"/>
+          <text x="220" y="34" text-anchor="middle" font-size="12" fill="#9ba2bf">AVANT</text>
+          <!-- repères -->
+          <g font-size="11" text-anchor="middle" fill="#b896ff">
+            <g><circle cx="220" cy="225" r="0"/></g>
+          </g>
+          <g id="callouts"></g>
+        </svg>
+      </div>
+    </figure>
+    <ul class="legend">
+      <li><span class="n">1</span><div><b>Noyau gravitique.</b> <span>Colonne de lumière du sol au plafond. Elle pulse plus vite quand le champ monte en puissance. C'est le « moteur ».</span></div></li>
+      <li><span class="n">2</span><div><b>Siège de pilotage.</b> <span>Moulé dans la paroi, trop large pour ses anciens occupants : on imagine qu'il a été adapté.</span></div></li>
+      <li><span class="n">3</span><div><b>Interfaces palmaires.</b> <span>Deux empreintes de main qui s'éclairent au contact. Gauche : champ antigravité (monter, descendre). Droite : vecteur de poussée (direction).</span></div></li>
+      <li><span class="n">4</span><div><b>Pupitre de glyphes.</b> <span>Arc d'affichages sans écran visible : les symboles apparaissent dans la matière.</span></div></li>
+      <li><span class="n">5</span><div><b>Bande de vision.</b> <span>Vue de l'intérieur, la coque devient transparente sur 220°. Vue de l'extérieur, aucune fenêtre.</span></div></li>
+      <li><span class="n">6</span><div><b>Sièges d'observation.</b> <span>Plus petits, gardés à la taille d'origine.</span></div></li>
+      <li><span class="n">7</span><div><b>Trappe ventrale.</b> <span>La coque s'ouvre en iris et une rampe descend jusqu'au sol.</span></div></li>
+      <li><span class="n">8</span><div><b>Niches murales.</b> <span>Rangements creusés dans la paroi. Leur contenu peut rester mystérieux.</span></div></li>
+    </ul>
+  </div>
+  <div class="ideas">
+    <div><h3>Pas de bouton</h3><p>Toutes les commandes sont des zones de la paroi qui s'allument quand on les survole. Dans le simulateur, ce sont des zones cliquables avec une infobulle portant le nom renommé.</p></div>
+    <div><h3>Lumière vivante</h3><p>Aucune lampe. La paroi en céramique diffuse une lueur qui change de couleur selon l'état : violet au repos, blanc en pleine poussée, ambre en cas d'alerte.</p></div>
+    <div><h3>Un mystère crédible</h3><p>Quelques détails restent sans fonction : un symbole qui clignote sans raison, une niche fermée. Cela donne l'impression d'une machine qu'on ne comprend qu'en partie.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Affichage tête haute</span>
+    <h2>Le HUD de la bande de vision</h2>
+    <p class="muted">Les informations de vol apparaissent sur la paroi transparente, devant le pilote, superposées au paysage. Comme le reste de l'appareil, le HUD s'affiche en glyphes, avec un mode traduction en français.</p>
+  </div>
+  <figure class="plate" style="margin:0">
+    <div class="plate-head"><b>Planche D · HUD en vol</b>
+      <span class="hud-switch" role="group" aria-label="Langue du HUD">
+        <button class="toggle" id="hud-fr" type="button" aria-pressed="true">Traduction</button>
+        <button class="toggle" id="hud-gl" type="button" aria-pressed="false">Glyphes</button>
+      </span>
+    </div>
+    <div class="svg-scroll">
+      <svg class="hudmock" id="hudmock" data-mode="fr" viewBox="0 0 1000 520" role="img" aria-label="Maquette du HUD : horizon, vitesse, altitude, cap, vecteur de déplacement, jauges de champ et de noyau">
+        <defs>
+          <linearGradient id="hSky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#0f1430"/><stop offset="0.55" stop-color="#3b3462"/><stop offset="0.9" stop-color="#b86f4c"/><stop offset="1" stop-color="#e09a62"/>
+          </linearGradient>
+          <linearGradient id="hGnd" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#4a3328"/><stop offset="1" stop-color="#140f0d"/>
+          </linearGradient>
+          <filter id="hGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2.2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <clipPath id="hClip"><rect width="1000" height="520"/></clipPath>
+        </defs>
+        <g clip-path="url(#hClip)">
+          <!-- paysage, incliné de 8° (virage) -->
+          <g transform="rotate(-8 500 260)">
+            <rect x="-300" y="-400" width="1600" height="672" fill="url(#hSky)"/>
+            <path d="M-300,272 L-120,236 L-20,252 L90,214 L210,248 L300,232 L420,258 L520,226 L640,250 L760,218 L880,246 L1000,230 L1300,262 L1300,272 Z" fill="#2a2030"/>
+            <rect x="-300" y="270" width="1600" height="700" fill="url(#hGnd)"/>
+            <g stroke="#6b4a3a" stroke-opacity="0.5"><line x1="500" y1="272" x2="140" y2="800"/><line x1="500" y1="272" x2="860" y2="800"/><line x1="-200" y1="330" x2="1200" y2="330"/><line x1="-200" y1="420" x2="1200" y2="420"/></g>
+          </g>
+          <!-- bords de la bande de vision -->
+          <path d="M0,0 H1000 V46 Q500,-6 0,46 Z" fill="#0c0f1d" opacity="0.92"/>
+          <path d="M0,520 V476 Q500,436 1000,476 V520 Z" fill="#0c0f1d" opacity="0.95"/>
+          <path d="M0,476 Q500,436 1000,476" fill="none" stroke="#6d58a8" stroke-dasharray="2 8" stroke-width="2"/>
+
+          <!-- symbologie -->
+          <g class="hud" filter="url(#hGlow)" stroke="#d4c1ff" fill="none" stroke-width="2" stroke-linecap="round">
+            <!-- échelle d'assiette -->
+            <g transform="rotate(-8 500 260)">
+              <path d="M150,270 H440 M560,270 H850"/>
+              <path d="M400,210 H460 M540,210 H600 M400,210 v8 M600,210 v8"/>
+              <path d="M420,150 H470 M530,150 H580"/>
+              <path d="M400,330 H460 M540,330 H600 M400,330 v-8 M600,330 v-8" stroke-dasharray="8 6"/>
+              <g fill="#d4c1ff" stroke="none" font-size="12">
+                <text class="num" x="388" y="214" text-anchor="end">10</text><text class="num" x="612" y="214">10</text>
+                <text class="num" x="408" y="154" text-anchor="end">20</text>
+                <text class="num" x="388" y="334" text-anchor="end">10</text>
+              </g>
+            </g>
+            <!-- symbole de l'appareil (fixe) -->
+            <ellipse cx="500" cy="260" rx="22" ry="6"/>
+            <path d="M489,256 Q500,245 511,256 M458,260 H474 M526,260 H542"/>
+            <!-- vecteur de déplacement -->
+            <circle cx="552" cy="284" r="8"/>
+            <path d="M538,284 H544 M560,284 H566 M552,276 V270"/>
+            <path d="M500,260 L546,280" stroke-dasharray="3 5" stroke-opacity="0.6"/>
+            <!-- cap -->
+            <path d="M330,78 H670"/>
+            <g id="hdgTicks"></g>
+            <path d="M500,84 l-6,10 h12 z" fill="#d4c1ff" stroke="none"/>
+            <!-- vitesse -->
+            <path d="M190,150 V370"/>
+            <g id="spdTicks"></g>
+            <path d="M118,248 H180 L192,260 L180,272 H118 Z"/>
+            <!-- altitude -->
+            <path d="M810,150 V370"/>
+            <g id="altTicks"></g>
+            <path d="M882,248 H820 L808,260 L820,272 H882 Z" transform="translate(14 0)"/>
+            <path d="M950,292 V310 M944,298 L950,292 L956,298"/>
+            <!-- jauges -->
+            <g id="gRes" data-cx="170" data-cy="418" data-v="0.78"></g>
+            <g id="gCore" data-cx="270" data-cy="418" data-v="0.42"></g>
+            <!-- radar de relief -->
+            <circle cx="500" cy="408" r="38" stroke-opacity="0.7"/>
+            <circle cx="500" cy="408" r="20" stroke-opacity="0.35"/>
+            <path d="M500,372 V444 M464,408 H536" stroke-opacity="0.3"/>
+            <g fill="#d4c1ff" stroke="none"><circle cx="516" cy="392" r="2.5"/><circle cx="526" cy="398" r="2"/><circle cx="482" cy="420" r="2"/><circle cx="530" cy="416" r="2.5"/></g>
+            <path d="M500,402 l-5,9 h10 z" fill="#d4c1ff" stroke="none"/>
+            <!-- cellules -->
+            <g id="cells"></g>
+            <!-- stase -->
+            <rect x="838" y="392" width="84" height="28" rx="4" stroke-dasharray="4 4" stroke-opacity="0.5"/>
+          </g>
+
+          <!-- textes -->
+          <g fill="#d4c1ff" font-size="12" filter="url(#hGlow)">
+            <text class="lbl" x="552" y="306" text-anchor="middle" font-size="11">déplacement</text>
+            <text class="num" x="155" y="265" text-anchor="middle" font-size="16">184</text>
+            <text class="lbl" x="190" y="140" text-anchor="middle" font-size="11">vitesse kt</text>
+            <text class="num" x="860" y="265" text-anchor="middle" font-size="16">2450</text>
+            <text class="lbl" x="810" y="140" text-anchor="middle" font-size="11">altitude ft</text>
+            <text class="num" x="950" y="328" text-anchor="middle">+620</text>
+            <text class="lbl" x="950" y="352" text-anchor="middle" font-size="11">sol 1180 ft</text>
+            <text class="num" x="170" y="424" text-anchor="middle" font-size="14">78</text>
+            <text class="lbl" x="170" y="464" text-anchor="middle" font-size="10">résonance</text>
+            <text class="num" x="270" y="424" text-anchor="middle" font-size="14">42</text>
+            <text class="lbl" x="270" y="464" text-anchor="middle" font-size="10">noyau</text>
+            <text class="lbl" x="500" y="462" text-anchor="middle" font-size="10">relief</text>
+            <text class="lbl" x="746" y="436" text-anchor="middle" font-size="10">cellules</text>
+            <text class="lbl" x="880" y="410" text-anchor="middle" font-size="11" fill-opacity="0.55">stase</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </figure>
+  <div class="ideas">
+    <div><h3>Ce qu'il affiche</h3><p>Horizon et assiette, cap, vitesse, altitude et hauteur sol, vitesse verticale. S'y ajoutent les infos propres à la soucoupe : résonance du champ, charge du noyau, cellules d'énergie et état de la stase.</p></div>
+    <div><h3>Le vecteur de déplacement</h3><p>Une soucoupe peut glisser sur le côté sans tourner. Le petit cercle montre où l'appareil va vraiment, ce qui est indispensable pour se poser avec précision.</p></div>
+    <div><h3>Radar de relief</h3><p>Une petite vue du dessus montre le terrain et les obstacles autour de l'appareil, utile en vol stationnaire près du sol ou de nuit.</p></div>
+    <div><h3>Allumage et luminosité</h3><p>On l'allume ou l'éteint en touchant un glyphe du pupitre, ou avec une touche du clavier. La luminosité baisse automatiquement la nuit.</p></div>
+  </div>
+  <p class="note">Dans le simulateur, le HUD est un instrument en HTML/JS projeté sur une vitre invisible, placée dans la bande de vision devant le pilote. Il lit en direct les données du vol. Une limite : l'horizon dessiné s'aligne sur le vrai horizon depuis la position de tête par défaut du pilote, et se décale un peu si on bouge la tête. Un alignement parfait, comme dans un avion de chasse, sera à étudier en phase 5.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Tablette de bord</span>
+    <h2>Le livre de vol : Dossier Sable</h2>
+    <p class="muted">La tablette de l'appareil contient le manuel de vol, écrit en 1948 par l'équipe qui a étudié la soucoupe. C'est un vrai manuel, qui explique comment démarrer et piloter. C'est aussi une histoire, racontée par les notes et les annotations de ceux qui l'ont écrit, et qui se dévoile au fil de tes vols.</p>
+  </div>
+
+  <div class="story-grid">
+    <div>
+      <h3>Le point de départ</h3>
+      <p>Juillet 1947. Pendant que l'armée ramasse les débris près de Corona, une deuxième équipe trouve, à quarante kilomètres de là, un appareil intact posé dans un ravin. Il est transporté de nuit jusqu'au Hangar 9, une installation qui n'existe sur aucune carte.</p>
+      <p>Une petite équipe passe des mois à comprendre comment il fonctionne, puis à le faire voler. Le manuel est leur travail. L'exemplaire de la tablette est le n° 3 : une traduction française remise à un officier de liaison, qui l'a annoté au crayon.</p>
+    </div>
+    <div>
+      <h3>Les personnages <span class="muted" style="font-family:var(--f-mono);font-size:11px;letter-spacing:.08em">(tous fictifs)</span></h3>
+      <ul class="cast">
+        <li><b>Margaret Holloway</b>, ingénieure. <span>Rédige le manuel. C'est elle qui a trouvé les noms « champ », « vecteur » et « noyau », faute de mieux.</span></li>
+        <li><b>Lt Daniel Ortega</b>, pilote d'essai. <span>Le premier à faire décoller la soucoupe. Ses conseils de pilotage sont notés dans les marges.</span></li>
+        <li><b>Dr Isaak Wendt</b>, linguiste. <span>Déchiffre les glyphes et construit le traducteur affiché sur le HUD.</span></li>
+        <li><b>Major Harlan Cole</b>, chef du projet. <span>Caviarde les pages qui le dérangent.</span></li>
+        <li><b>Cne Lucien Marchal</b>, officier de liaison français. <span>Le narrateur : ses notes au crayon racontent ce que le manuel ne dit pas.</span></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Pourquoi ça tient debout</h3>
+      <p>L'histoire explique les choix du mod. Les commandes portent des noms français parce que c'est la traduction de Marchal. Le siège est trop grand parce que l'équipe l'a adapté. Le mode traduction du HUD est l'appareil construit par Wendt.</p>
+    </div>
+  </div>
+
+  <figure class="plate" style="margin:0">
+    <div class="plate-head"><b>Planche E · L'application sur la tablette</b><span>Chapitre 4 ouvert</span></div>
+    <div class="tablet">
+      <div class="screen">
+        <aside class="efb-side">
+          <div class="efb-app"><b>Dossier Sable</b><span>Exemplaire n° 3 · 4&nbsp;chapitres sur&nbsp;9</span></div>
+          <div class="efb-progress" aria-hidden="true"><i></i></div>
+          <ol class="chapters">
+            <li class="read"><span class="k">1</span><div>Rapport de récupération<small>lu</small></div></li>
+            <li class="read"><span class="k">2</span><div>Description de l'appareil<small>lu</small></div></li>
+            <li class="read"><span class="k">3</span><div>Mise en œuvre et procédures<small>lu</small></div></li>
+            <li class="cur"><span class="k">4</span><div>Pilotage<small>nouveau · après ton premier stationnaire</small></div></li>
+            <li class="locked"><span class="k">5</span><div>Les glyphes et le traducteur<small>verrouillé · 10 min de vol</small></div></li>
+            <li class="locked"><span class="k">6</span><div>Domaine de vol<small>verrouillé · franchir la ligne de Kármán</small></div></li>
+            <li class="locked"><span class="k">7</span><div>Vol de nuit<small>verrouillé · voler après le coucher du soleil</small></div></li>
+            <li class="locked"><span class="k">8</span><div>Retour à Corona<small>verrouillé · survoler le site de 1947</small></div></li>
+            <li class="locked"><span class="k">9</span><div>Dernière entrée<small>verrouillé · ???</small></div></li>
+          </ol>
+        </aside>
+        <div class="efb-page">
+          <article class="paper">
+            <div class="ref"><span>DOSSIER SABLE · MANUEL D'UTILISATION</span><span>Hangar 9 · 14 mars 1948</span></div>
+            <div class="stamp2">Secret<br>Ne pas sortir<br>du hangar 9</div>
+            <h4>Chapitre 4 · Pilotage</h4>
+            <p><b>4.1 Le champ.</b> L'appareil ne possède ni voilure ni moteur au sens où nous l'entendons. Il est porté par un phénomène que nous avons nommé, faute de mieux, « champ antigravité ». On le commande avec l'empreinte palmaire gauche : paume levée, le champ augmente ; paume abaissée, il diminue.</p>
+            <p class="hand margin">Ortega dit qu'il faut garder la main posée « comme sur la tête d'un chien qu'on rassure ». Il a raison, ça marche. L.M.</p>
+            <p><b>4.2 Le vecteur.</b> L'empreinte droite oriente la poussée. L'appareil se déplace dans la direction voulue sans s'incliner de plus de 4°. Le pilote doit donc surveiller le symbole de déplacement, et non l'horizon.</p>
+            <div class="sketch">
+              <svg viewBox="0 0 120 70" aria-hidden="true"><ellipse cx="60" cy="40" rx="48" ry="9" fill="none" stroke="#2a2520" stroke-width="1.5"/><path d="M42,36 Q60,18 78,36" fill="none" stroke="#2a2520" stroke-width="1.5"/><path d="M60,52 L92,64 M86,58 L92,64 L84,66" fill="none" stroke="#2f4a8a" stroke-width="1.5"/></svg>
+              <span>Fig. 4-2. Le disque glisse vers la droite sans pivoter. Croquis de Margaret Holloway.</span>
+            </div>
+            <p><b>4.3 Mise en garde.</b> Ne jamais laisser la résonance descendre sous 60 % à moins de 50 pieds du sol. Cette limite a été établie <span class="redact">après la perte de contrôle du</span> lors de l'essai n° 7.</p>
+            <p class="hand margin">Essai n° 7 : j'ai demandé à Cole. Il refuse d'en parler. Wendt était là ce jour-là, il dit que le noyau « a répondu ». Répondu à quoi ?</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </figure>
+
+  <div class="ideas">
+    <div><h3>Un vrai manuel</h3><p>Les procédures (éveil du noyau, décollage, stationnaire, atterrissage, stase, limites) sont exactes et correspondent au mod. On peut piloter en suivant le livre.</p></div>
+    <div><h3>Des chapitres à débloquer</h3><p>L'application suit tes vols : premier stationnaire, altitude, vol de nuit, survol du site de Corona. Chaque étape ouvre un chapitre. Une option permet de tout débloquer si tu veux juste lire.</p></div>
+    <div><h3>Plusieurs voix</h3><p>Rapports tapés à la machine, croquis, tampons, passages caviardés, notes au crayon et photos d'époque en noir et blanc, tirées du modèle 3D du mod.</p></div>
+    <div><h3>Une fin ouverte</h3><p>Le dernier chapitre s'arrête net et laisse des coordonnées. Elles pourront mener à une mission dans le simulateur.</p></div>
+  </div>
+  <p class="note">MSFS 2024 permet d'ajouter ses propres applications à la tablette de bord grâce au SDK. Le livre de vol sera une de ces applications, avec sauvegarde de ta progression. Le détail technique (suivi des vols, mémorisation des chapitres débloqués) sera validé avec la documentation du SDK quand on arrivera à cette étape.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Équipement</span>
+    <h2>Le rayon pilotable</h2>
+    <p class="muted">Sous la soucoupe, une lentille orientable projette un rayon. On choisit sa forme, sa couleur et sa puissance, puis on l'oriente comme un projecteur. Essaie les réglages ci-dessous.</p>
+  </div>
+  <div class="laser-lab">
+    <div class="viewer-box laser-box">
+      <div id="laserView" aria-label="Démonstration 3D du rayon pilotable"></div>
+      <div class="viewer-fallback" id="laser-fallback" hidden>La démonstration 3D n'a pas pu démarrer sur cet appareil.</div>
+      <div class="laser-read" id="laserRead" aria-live="off"></div>
+    </div>
+    <div class="laser-panel">
+      <div class="ctl"><span class="ctl-l">Forme</span>
+        <div class="seg" data-group="shape">
+          <button class="toggle" type="button" data-v="laser" aria-pressed="true">Laser</button>
+          <button class="toggle" type="button" data-v="cone" aria-pressed="false">Projecteur</button>
+          <button class="toggle" type="button" data-v="fan" aria-pressed="false">Éventail</button>
+        </div>
+      </div>
+      <div class="ctl"><span class="ctl-l">Couleur</span>
+        <div class="seg" data-group="color">
+          <button class="swatch-btn" type="button" data-v="#ff3b3b" style="--c:#ff3b3b" aria-label="Rouge" aria-pressed="true"></button>
+          <button class="swatch-btn" type="button" data-v="#39ff88" style="--c:#39ff88" aria-label="Vert" aria-pressed="false"></button>
+          <button class="swatch-btn" type="button" data-v="#3b8bff" style="--c:#3b8bff" aria-label="Bleu" aria-pressed="false"></button>
+          <button class="swatch-btn" type="button" data-v="#b896ff" style="--c:#b896ff" aria-label="Violet" aria-pressed="false"></button>
+          <button class="swatch-btn" type="button" data-v="#ffb23b" style="--c:#ffb23b" aria-label="Ambre" aria-pressed="false"></button>
+          <button class="swatch-btn" type="button" data-v="#ffffff" style="--c:#ffffff" aria-label="Blanc" aria-pressed="false"></button>
+        </div>
+      </div>
+      <div class="ctl"><label class="ctl-l" for="l-power">Puissance <output id="o-power">70 %</output></label><input type="range" id="l-power" min="10" max="100" value="70"></div>
+      <div class="ctl"><label class="ctl-l" for="l-az">Orientation <output id="o-az">-60°</output></label><input type="range" id="l-az" min="-180" max="180" value="-60"></div>
+      <div class="ctl"><label class="ctl-l" for="l-el">Inclinaison vers le sol <output id="o-el">55°</output></label><input type="range" id="l-el" min="15" max="90" value="55"></div>
+      <div class="ctl"><span class="ctl-l">Mode</span>
+        <div class="seg" data-group="mode">
+          <button class="toggle" type="button" data-v="fixe" aria-pressed="true">Fixe</button>
+          <button class="toggle" type="button" data-v="pulse" aria-pressed="false">Pulsé</button>
+          <button class="toggle" type="button" data-v="sweep" aria-pressed="false">Balayage</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ideas">
+    <div><h3>Dans le cockpit</h3><p>Une page « Rayon » sur la tablette pour choisir la forme, la couleur et la puissance. L'orientation se règle au clavier ou avec un joystick. Sur le HUD, un réticule montre où le rayon touche le sol, avec la distance.</p></div>
+    <div><h3>Ce que fait le simulateur</h3><p>Le rayon est visible dans l'air et éclaire le sol de sa couleur. Il ne peut rien détruire ni modifier dans le décor : MSFS ne le permet pas. En plein jour, il sera moins spectaculaire que de nuit.</p></div>
+    <div><h3>Comment on le construit</h3><p>Une tourelle animée sous la coque, une forme 3D lumineuse par type de rayon, et une vraie lumière projetée par couleur. Le suivi exact de la lumière quand la tourelle pivote sera validé pendant les essais.</p></div>
+  </div>
+  <div class="story-grid">
+    <div>
+      <h3>Le rayon dans l'histoire</h3>
+      <p>Dans le manuel, l'équipe croit d'abord avoir trouvé un simple projecteur. Puis le linguiste Wendt remarque que les couleurs suivent des séquences, comme les glyphes. Le rayon n'éclaire pas seulement : il sert à parler. C'est ce qui s'est passé lors de l'essai n° 7.</p>
+    </div>
+    <div>
+      <h3>Missions possibles</h3>
+      <ul class="principles">
+        <li><b>Signaux</b><span>Le manuel donne une séquence de couleurs. La reproduire en vol débloque le chapitre suivant.</span></li>
+        <li><b>Recherche de nuit</b><span>Retrouver des fragments posés dans le désert près de Corona, au projecteur.</span></li>
+        <li><b>Le Hangar 9</b><span>Éclairer son emplacement pendant 10 secondes révèle une page caviardée.</span></li>
+      </ul>
+      <p class="muted" style="font-size:14px">Le mod calcule lui-même où pointe le rayon et le compare à la position de la cible.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Capacités aquatiques</span>
+    <h2>Et sous l'eau ?</h2>
+    <p class="muted">Réponse franche : MSFS ne simule pas la navigation sous l'eau. Pour le simulateur, la surface de l'eau se comporte comme un sol, et presque rien n'est affiché en dessous. On ne pourra donc pas piloter librement sous l'eau. En revanche, on peut aller assez loin.</p>
+  </div>
+  <div class="ideas">
+    <div><h3>Se poser sur l'eau</h3><p>La soucoupe flotte, comme un hydravion, et redécolle depuis la surface d'un lac ou de la mer.</p></div>
+    <div><h3>Vol rasant</h3><p>Stationnaire juste au-dessus des vagues, l'émetteur ventral illuminant l'eau. Des gerbes d'eau sous l'appareil, si les effets du simulateur le permettent.</p></div>
+    <div><h3>La plongée mise en scène</h3><p>La soucoupe s'enfonce. La lumière s'assombrit, le HUD passe en mode « immersion » et la tablette affiche le trajet sous-marin. Puis l'appareil ressort ailleurs, dans un autre lac ou en mer, choisi sur la tablette. Pendant le transit, le mod déplace l'appareil.</p></div>
+  </div>
+  <p class="note">La plongée mise en scène sera une phase à part (phase 6). Il faudra vérifier en essai jusqu'où on peut descendre l'appareil sous la surface avant de passer au transit.</p>
+  <div class="story-grid">
+    <div>
+      <h3>L'eau dans l'histoire : la dernière entrée</h3>
+      <p>Le dernier chapitre du manuel est le journal d'Ortega. Une nuit, il survole le lac d'Elephant Butte, au Nouveau-Mexique, et éclaire la surface avec le rayon violet. L'eau lui répond de la même couleur. Il plonge. Le journal s'arrête là, avec un seul ajout de Marchal au crayon : des coordonnées.</p>
+      <p>À toi d'aller voir ce qu'il y a à cet endroit.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Très haute altitude</span>
+    <h2>Jusqu'à l'espace</h2>
+    <p class="muted">Oui, on peut aller beaucoup plus haut et beaucoup plus vite. MSFS 2024 semble avoir quasiment levé la limite d'altitude : un mod de navette spatiale y démarre à 400 000 ft (environ 120 km). La limite conventionnelle de l'espace, la ligne de Kármán, est à 100 km, soit environ 328 000 ft.</p>
+  </div>
+  <div class="ideas">
+    <div><h3>Ce qu'on verra</h3><p>La courbure de la Terre, le ciel qui passe du bleu au noir, et le halo de l'atmosphère sur l'horizon. Le simulateur affiche bien le globe vu de très haut.</p></div>
+    <div><h3>Ce que MSFS ne fait pas</h3><p>Il n'est pas conçu pour l'espace : pas de mise en orbite réaliste, pas de vol vers la Lune. Au-delà d'une certaine altitude, l'affichage peut présenter des défauts. On saura en essai jusqu'où c'est beau.</p></div>
+    <div><h3>La vitesse</h3><p>Le modèle hélicoptère plafonne vers 250 kt. Au-delà, c'est le module de vol de la phase 5 qui prend le relais. Une limite : à très grande vitesse au ras du sol, le décor n'a pas le temps de se charger.</p></div>
+  </div>
+  <div class="story-grid">
+    <div>
+      <h3>Trois régimes de vol</h3>
+      <ul class="principles">
+        <li><b>Atmosphérique</b><span>Jusqu'à 45 000 ft. Vol normal, HUD standard.</span></li>
+        <li><b>Stratosphérique</b><span>De 45 000 à 160 000 ft. Le noyau change de couleur, le ciel s'assombrit, la vitesse peut dépasser Mach 5.</span></li>
+        <li><b>Spatial</b><span>Au-delà de 328 000 ft. Le HUD passe en kilomètres et affiche la courbure de la Terre, le noyau devient blanc et la couronne s'éteint.</span></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Dans l'histoire</h3>
+      <p>Le chapitre 6, « Domaine de vol », raconte le vol où Ortega a continué de monter alors que tous les instruments humains s'étaient arrêtés. Il revient en disant que le ciel était noir à midi. Personne ne le croit. Le chapitre se débloque quand tu franchis toi-même la ligne de Kármán.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Commandes</span>
+    <h2>L'hélicoptère, renommé</h2>
+    <p class="muted">Sous la coque, le simulateur fait voler un hélicoptère. Chaque commande et chaque indicateur prend un nom d'OVNI.</p>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Hélicoptère</th><th>Disque Corona</th><th>Dans le cockpit</th></tr></thead>
+      <tbody>
+        <tr><td class="heli">Collectif</td><td class="ufo">Champ antigravité</td><td>Interface palmaire gauche. Plus le champ est fort, plus on monte.</td></tr>
+        <tr><td class="heli">Cyclique</td><td class="ufo">Vecteur de poussée</td><td>Interface palmaire droite. Oriente le champ vers l'avant, l'arrière ou les côtés.</td></tr>
+        <tr><td class="heli">Palonnier / anticouple</td><td class="ufo">Rotation du disque</td><td>Fait pivoter l'appareil sur lui-même.</td></tr>
+        <tr><td class="heli">Régime rotor (Nr)</td><td class="ufo">Résonance du champ</td><td>Anneau de glyphes autour du pupitre, exprimé en %.</td></tr>
+        <tr><td class="heli">Turbine (N1)</td><td class="ufo">Activité du noyau</td><td>Vitesse de pulsation du noyau central.</td></tr>
+        <tr><td class="heli">Couple moteur</td><td class="ufo">Charge du noyau</td><td>Passe à l'ambre puis au rouge en cas d'excès.</td></tr>
+        <tr><td class="heli">Carburant</td><td class="ufo">Cellules d'énergie</td><td>Cinq cellules lumineuses dans la paroi.</td></tr>
+        <tr><td class="heli">Démarreur</td><td class="ufo">Éveil du noyau</td><td>Paume posée trois secondes sur le pupitre.</td></tr>
+        <tr><td class="heli">Frein rotor</td><td class="ufo">Ancrage du champ</td><td>Stabilise l'appareil au sol.</td></tr>
+        <tr><td class="heli">Train d'atterrissage</td><td class="ufo">Pieds d'appui</td><td>Trois pieds qui sortent de la coque.</td></tr>
+        <tr><td class="heli">Phares</td><td class="ufo">Faisceau ventral</td><td>Cône de lumière sous l'appareil.</td></tr>
+        <tr><td class="heli">Feux de navigation</td><td class="ufo">Couronne d'émetteurs</td><td>24 lumières en rotation sur le bord.</td></tr>
+        <tr><td class="heli">Pilote auto / maintien</td><td class="ufo">Stase</td><td>Fige l'appareil en vol stationnaire.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Une limite à connaître : le menu des commandes de MSFS continuera d'afficher « Collectif » ou « Cyclique », car ce sont des noms du simulateur qu'un mod ne peut pas modifier. Tout ce qui se trouve dans l'appareil portera les nouveaux noms : infobulles, affichages, checklists et manuel de vol.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">Fabrication</span>
+    <h2>Plan de production</h2>
+    <p class="muted">Tu n'as pas besoin d'apprendre Blender : je génère le modèle 3D par programme, de mon côté. Ta part se limite à compiler et tester dans le simulateur.</p>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Étape</th><th>Contenu</th><th>Ma part</th><th>Ta part</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag now">Phase 1</span></td><td><b>Soucoupe volante</b><br><span class="muted">Coque extérieure détaillée, matériaux, package complet, vol hélico renommé.</span></td><td class="who">Modèle 3D, textures, fichiers de configuration, structure du mod.</td><td class="who">Installer le SDK, compiler (je te guide pas à pas), premier vol.</td></tr>
+        <tr><td><span class="tag">Phase 2</span></td><td><b>Intérieur</b><br><span class="muted">Cabine, noyau animé, siège, interfaces palmaires, bande de vision.</span></td><td class="who">Modèle intérieur et animations.</td><td class="who">Tester et me faire des retours en captures d'écran.</td></tr>
+        <tr><td><span class="tag">Phase 3</span></td><td><b>Affichages</b><br><span class="muted">HUD dans la bande de vision, pupitre de glyphes, mode traduction, tablette avec le livre de vol « Dossier Sable ».</span></td><td class="who">HUD, instruments, application de tablette, écriture complète de l'histoire.</td><td class="who">Tester.</td></tr>
+        <tr><td><span class="tag">Phase 4</span></td><td><b>Lumières et sons</b><br><span class="muted">Couronne animée, faisceau, lueur ventrale, rayon pilotable (forme, couleur, puissance), bourdonnement.</span></td><td class="who">Lumières et logique. Sons à étudier : MSFS passe par l'outil audio Wwise.</td><td class="who">Tester.</td></tr>
+        <tr><td><span class="tag">Phase 5</span></td><td><b>Vol avancé</b><br><span class="muted">Stase parfaite, arrêt net, déplacement latéral sans inclinaison, vitesse extrême et montée jusqu'à l'espace.</span></td><td class="who">Module C++ (WebAssembly).</td><td class="who">Tester.</td></tr>
+        <tr><td><span class="tag">Phase 6</span></td><td><b>Eau</b><br><span class="muted">Flottaison, vol rasant, plongée mise en scène et transit sous-marin.</span></td><td class="who">Configuration, effets, séquence de plongée et déplacement de l'appareil.</td><td class="who">Tester jusqu'où on peut descendre.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="need">
+    <h3>À préparer sur ton PC</h3>
+    <ol>
+      <li>Dans MSFS 2024, activer le <b>mode développeur</b> (dans les options générales, rubrique Développeurs).</li>
+      <li>Installer le <b>SDK de MSFS 2024</b>. Il est gratuit et se télécharge depuis le menu du mode développeur.</li>
+      <li>Rien d'autre : pas de Blender, pas de logiciel de 3D.</li>
+    </ol>
+  </div>
+</section>
+
+<footer>Disque Corona · type R-47 · appareil fictif inspiré de l'affaire de Roswell (1947), pour Microsoft Flight Simulator 2024.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  "use strict";
+  var NS = "http://www.w3.org/2000/svg";
+
+  // --- Glyphes inventés (déterministes) ---
+  function rng(seed) { return function () { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
+  function glyphPaths(seed) {
+    var r = rng(seed * 7919 + 13), d = [];
+    var pts = [[6, 6], [20, 6], [34, 6], [6, 20], [20, 20], [34, 20], [6, 34], [20, 34], [34, 34]];
+    var n = 2 + Math.floor(r() * 3);
+    for (var i = 0; i < n; i++) {
+      var a = pts[Math.floor(r() * 9)], b = pts[Math.floor(r() * 9)];
+      if (a === b) continue;
+      if (r() < 0.45) d.push("M" + a[0] + "," + a[1] + " Q20,20 " + b[0] + "," + b[1]);
+      else d.push("M" + a[0] + "," + a[1] + " L" + b[0] + "," + b[1]);
+    }
+    var c = r() < 0.6 ? pts[Math.floor(r() * 9)] : null;
+    return { d: d.join(" "), dot: c, ring: r() < 0.3 };
+  }
+  function glyphSvg(seed, color) {
+    var g = glyphPaths(seed);
+    var s = document.createElementNS(NS, "svg");
+    s.setAttribute("viewBox", "0 0 40 40");
+    var p = document.createElementNS(NS, "path");
+    p.setAttribute("d", g.d); p.setAttribute("fill", "none"); p.setAttribute("stroke", color);
+    p.setAttribute("stroke-width", "2.4"); p.setAttribute("stroke-linecap", "round");
+    s.appendChild(p);
+    if (g.dot) { var c = document.createElementNS(NS, "circle"); c.setAttribute("cx", g.dot[0]); c.setAttribute("cy", g.dot[1]); c.setAttribute("r", "3"); c.setAttribute("fill", color); s.appendChild(c); }
+    if (g.ring) { var o = document.createElementNS(NS, "circle"); o.setAttribute("cx", "20"); o.setAttribute("cy", "20"); o.setAttribute("r", "15"); o.setAttribute("fill", "none"); o.setAttribute("stroke", color); o.setAttribute("stroke-width", "1.4"); o.setAttribute("stroke-dasharray", "3 4"); s.appendChild(o); }
+    return s;
+  }
+  var strip = document.getElementById("glyphs");
+  for (var i = 1; i <= 18; i++) strip.appendChild(glyphSvg(i, "#b896ff"));
+  var chip = document.getElementById("chipGlyph");
+  var chipSvg = document.createElementNS(NS, "svg");
+  chipSvg.setAttribute("viewBox", "0 0 160 120");
+  for (var k = 0; k < 12; k++) {
+    var gs = glyphSvg(k + 40, "#c9b0ff");
+    gs.setAttribute("x", 8 + (k % 4) * 38); gs.setAttribute("y", 6 + Math.floor(k / 4) * 38);
+    gs.setAttribute("width", "30"); gs.setAttribute("height", "30");
+    gs.style.filter = "drop-shadow(0 0 3px #8a64ff)";
+    chipSvg.appendChild(gs);
+  }
+  chip.appendChild(chipSvg);
+
+  // --- Points de la couronne sur les planches ---
+  var rim = document.getElementById("rimDots");
+  for (var j = 0; j < 24; j++) {
+    var th = (j / 24) * Math.PI * 2;
+    if (Math.sin(th) < 0) continue;
+    var c1 = document.createElementNS(NS, "circle");
+    c1.setAttribute("cx", (500 + 462 * Math.cos(th)).toFixed(1)); c1.setAttribute("cy", "220"); c1.setAttribute("r", "4");
+    rim.appendChild(c1);
+  }
+  var und = document.getElementById("underDots");
+  for (var m = 0; m < 24; m++) {
+    var t2 = (m / 24) * Math.PI * 2;
+    var c2 = document.createElementNS(NS, "circle");
+    c2.setAttribute("cx", (240 + 203 * Math.cos(t2)).toFixed(1)); c2.setAttribute("cy", (250 + 203 * Math.sin(t2)).toFixed(1)); c2.setAttribute("r", "4");
+    und.appendChild(c2);
+  }
+  // Repères numérotés du plan de cabine
+  var calls = [[1, 220, 225, 268, 205], [2, 220, 168, 220, 196], [3, 257, 150, 290, 168], [4, 220, 100, 220, 80], [5, 120, 104, 96, 92], [6, 118, 280, 92, 316], [7, 220, 336, 270, 380], [8, 64, 225, 40, 268]];
+  var cg = document.getElementById("callouts");
+  calls.forEach(function (c) {
+    var l = document.createElementNS(NS, "line");
+    l.setAttribute("x1", c[1]); l.setAttribute("y1", c[2]); l.setAttribute("x2", c[3]); l.setAttribute("y2", c[4]);
+    l.setAttribute("stroke", "#b896ff"); l.setAttribute("stroke-opacity", "0.6");
+    cg.appendChild(l);
+    var ci = document.createElementNS(NS, "circle");
+    ci.setAttribute("cx", c[3]); ci.setAttribute("cy", c[4]); ci.setAttribute("r", "11");
+    ci.setAttribute("fill", "#0c0f1d"); ci.setAttribute("stroke", "#b896ff");
+    cg.appendChild(ci);
+    var tx = document.createElementNS(NS, "text");
+    tx.setAttribute("x", c[3]); tx.setAttribute("y", c[4] + 4); tx.setAttribute("text-anchor", "middle");
+    tx.setAttribute("font-size", "12"); tx.setAttribute("fill", "#b896ff"); tx.textContent = c[0];
+    cg.appendChild(tx);
+  });
+
+  // --- Maquette du HUD ---
+  (function () {
+    var hud = document.getElementById("hudmock");
+    var C = "#d4c1ff";
+    function el(tag, attrs, parent) { var n = document.createElementNS(NS, tag); for (var a in attrs) n.setAttribute(a, attrs[a]); if (parent) parent.appendChild(n); return n; }
+    // Cap
+    var hdg = document.getElementById("hdgTicks"), labels = ["33", "34", "35", "N", "01", "02", "03"];
+    for (var i = 0; i <= 34; i++) {
+      var x = 330 + i * 10, major = i % 5 === 2;
+      el("path", { d: "M" + x + ",78 V" + (major ? 66 : 72) }, hdg);
+      if (major) { var t = el("text", { x: x, y: 60, "text-anchor": "middle", "font-size": "11", fill: C, stroke: "none", "class": labels[(i - 2) / 5] === "N" ? "lbl" : "num" }, hdg); t.textContent = labels[(i - 2) / 5]; }
+    }
+    // Tapes vitesse / altitude
+    function tape(g, x, dir, base, step) {
+      for (var k = -5; k <= 5; k++) {
+        var y = 260 - k * 20;
+        if (Math.abs(k) < 1) continue;
+        el("path", { d: "M" + x + "," + y + " h" + (dir * (k % 2 ? 6 : 12)) }, g);
+        if (k % 2 === 0) { var t = el("text", { x: x + dir * 18, y: y + 4, "text-anchor": dir < 0 ? "end" : "start", "font-size": "11", fill: C, stroke: "none", "class": "num" }, g); t.textContent = String(base + k * step); }
+      }
+    }
+    tape(document.getElementById("spdTicks"), 190, -1, 180, 10);
+    tape(document.getElementById("altTicks"), 810, 1, 2400, 100);
+    // Jauges en arc
+    function arcPath(cx, cy, r, a0, a1) {
+      var x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0), x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+      return "M" + x0.toFixed(1) + "," + y0.toFixed(1) + " A" + r + "," + r + " 0 " + (a1 - a0 > Math.PI ? 1 : 0) + " 1 " + x1.toFixed(1) + "," + y1.toFixed(1);
+    }
+    ["gRes", "gCore"].forEach(function (id) {
+      var g = document.getElementById(id), cx = +g.dataset.cx, cy = +g.dataset.cy, v = +g.dataset.v;
+      var a0 = Math.PI * 0.75, span = Math.PI * 1.5;
+      el("path", { d: arcPath(cx, cy, 30, a0, a0 + span), "stroke-opacity": "0.3", "stroke-width": "5" }, g);
+      el("path", { d: arcPath(cx, cy, 30, a0, a0 + span * v), "stroke-width": "5" }, g);
+    });
+    // Cellules
+    var cells = document.getElementById("cells");
+    for (var c = 0; c < 5; c++) el("rect", { x: 714 + c * 14, y: 394, width: 9, height: 28, rx: 2, fill: c < 4 ? C : "none", "fill-opacity": c < 4 ? "0.75" : "0" }, cells);
+    // Version glyphes : chiffres et lettres ont chacun leur symbole fixe
+    function charGlyph(ch, x, y, s, parent) {
+      var seed = /[0-9]/.test(ch) ? 300 + (+ch) : 400 + ch.toLowerCase().charCodeAt(0);
+      var gp = glyphPaths(seed);
+      var sv = el("svg", { x: x, y: y, width: s, height: s, viewBox: "0 0 40 40", overflow: "visible" }, parent);
+      el("path", { d: gp.d, fill: "none", stroke: C, "stroke-width": "4.5", "stroke-linecap": "round" }, sv);
+      if (gp.dot) el("circle", { cx: gp.dot[0], cy: gp.dot[1], r: "4", fill: C }, sv);
+    }
+    Array.prototype.forEach.call(hud.querySelectorAll("text.num, text.lbl"), function (t) {
+      var raw = t.textContent.replace(/[\s+%]/g, "");
+      if (t.classList.contains("lbl")) raw = raw.replace(/[^a-zA-Zéè0-9]/g, "").replace(/[éè]/g, "e").slice(0, 7);
+      var fs = parseFloat(t.getAttribute("font-size") || t.parentNode.getAttribute("font-size") || 12);
+      var s = fs * 0.95, gap = s * 0.25, w = raw.length * (s + gap) - gap;
+      var x = +t.getAttribute("x"), y = +t.getAttribute("y"), anchor = t.getAttribute("text-anchor") || "start";
+      var x0 = anchor === "middle" ? x - w / 2 : anchor === "end" ? x - w : x;
+      var g = el("g", { "class": "gly" }, t.parentNode);
+      if (t.getAttribute("fill-opacity")) g.setAttribute("opacity", t.getAttribute("fill-opacity"));
+      for (var i = 0; i < raw.length; i++) charGlyph(raw[i], x0 + i * (s + gap), y - s * 0.85, s, g);
+    });
+    var bFr = document.getElementById("hud-fr"), bGl = document.getElementById("hud-gl");
+    function setMode(m) { hud.setAttribute("data-mode", m); bFr.setAttribute("aria-pressed", String(m === "fr")); bGl.setAttribute("aria-pressed", String(m === "glyph")); }
+    bFr.addEventListener("click", function () { setMode("fr"); });
+    bGl.addEventListener("click", function () { setMode("glyph"); });
+  })();
+
+  // --- Aperçu 3D ---
+  var host = document.getElementById("viewer");
+  var fallback = document.getElementById("viewer-fallback");
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (typeof THREE === "undefined") { fallback.hidden = false; return; }
+  var renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  } catch (e) { fallback.hidden = false; return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  host.appendChild(renderer.domElement);
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.1, 300);
+
+  // Environnement : ciel nocturne + panneaux lumineux pour les reflets du métal
+  var env = new THREE.Scene();
+  var sg = new THREE.SphereGeometry(60, 48, 24);
+  var cols = [], pos = sg.attributes.position;
+  var zen = new THREE.Color("#0a0d1c"), hor = new THREE.Color("#4a4f7a"), gnd = new THREE.Color("#2b2320"), deep = new THREE.Color("#120e0c");
+  for (var v = 0; v < pos.count; v++) {
+    var y = pos.getY(v) / 60, col = new THREE.Color();
+    if (y >= 0) col.copy(hor).lerp(zen, Math.pow(y, 0.6)); else col.copy(gnd).lerp(deep, Math.pow(-y, 0.5));
+    cols.push(col.r, col.g, col.b);
+  }
+  sg.setAttribute("color", new THREE.Float32BufferAttribute(cols, 3));
+  env.add(new THREE.Mesh(sg, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide })));
+  function box(w, h, color, x, y, z) {
+    var p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide }));
+    p.position.set(x, y, z); p.lookAt(0, 0, 0); env.add(p);
+  }
+  box(40, 10, 0xdfe4ff, 0, 40, 10);
+  box(30, 6, 0xffc78a, -45, 6, -10);
+  box(20, 5, 0xb896ff, 40, -4, 20);
+  var pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(env, 0.03).texture;
+
+  scene.add(new THREE.HemisphereLight(0x8890c0, 0x201814, 0.5));
+  var moon = new THREE.DirectionalLight(0xdfe6ff, 1.2); moon.position.set(6, 12, 8); scene.add(moon);
+
+  var craft = new THREE.Group(); scene.add(craft);
+
+  function lathe(pts, seg) { return new THREE.LatheGeometry(pts.map(function (p) { return new THREE.Vector2(p[0], p[1]); }), seg); }
+  var hull = new THREE.Mesh(
+    lathe([[0, -0.9], [0.9, -0.87], [1.6, -0.81], [2.8, -0.65], [3.8, -0.41], [4.4, -0.18], [4.63, -0.06], [4.7, 0], [4.63, 0.07], [4.4, 0.17], [4.0, 0.33], [3.0, 0.6], [2.2, 0.78], [1.64, 0.86], [1.6, 0.9]], 160),
+    new THREE.MeshStandardMaterial({ color: 0xd2d5de, metalness: 0.92, roughness: 0.26, envMapIntensity: 1.3 })
+  );
+  craft.add(hull);
+  var collar = new THREE.Mesh(new THREE.TorusGeometry(1.62, 0.05, 12, 96), new THREE.MeshStandardMaterial({ color: 0x5a5f70, metalness: 0.9, roughness: 0.4 }));
+  collar.rotation.x = Math.PI / 2; collar.position.y = 0.88; craft.add(collar);
+
+  var dome = new THREE.Mesh(
+    lathe([[1.6, 0.88], [1.56, 1.15], [1.39, 1.48], [1.06, 1.76], [0.6, 1.94], [0, 2.0]], 96),
+    new THREE.MeshPhysicalMaterial({ color: 0x2b2244, metalness: 0.15, roughness: 0.04, clearcoat: 1, transparent: true, opacity: 0.82, envMapIntensity: 1.6 })
+  );
+  craft.add(dome);
+  var coreGlow = new THREE.Mesh(new THREE.SphereGeometry(0.35, 24, 16), new THREE.MeshBasicMaterial({ color: 0xb896ff, transparent: true, opacity: 0.55 }));
+  coreGlow.position.y = 1.2; craft.add(coreGlow);
+
+  // Bande de glyphes
+  var gc = document.createElement("canvas"); gc.width = 2048; gc.height = 64;
+  var gx = gc.getContext("2d");
+  gx.strokeStyle = "#ffffff"; gx.fillStyle = "#ffffff"; gx.lineWidth = 3; gx.lineCap = "round";
+  for (var q = 0; q < 48; q++) {
+    var gp = glyphPaths(q + 100), ox = q * (2048 / 48) + 4;
+    gx.save(); gx.translate(ox, 12); gx.scale(1, 1);
+    var p2 = new Path2D(gp.d); gx.stroke(p2);
+    if (gp.dot) { gx.beginPath(); gx.arc(gp.dot[0], gp.dot[1], 3, 0, 7); gx.fill(); }
+    gx.restore();
+  }
+  var gtex = new THREE.CanvasTexture(gc); gtex.wrapS = THREE.RepeatWrapping; gtex.repeat.set(3, 1);
+  var band = new THREE.Mesh(new THREE.CylinderGeometry(4.712, 4.712, 0.07, 256, 1, true),
+    new THREE.MeshBasicMaterial({ map: gtex, color: 0xb896ff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+  craft.add(band);
+
+  // Couronne d'émetteurs
+  var emitters = [], ring = new THREE.Group(); craft.add(ring);
+  for (var e = 0; e < 24; e++) {
+    var a = (e / 24) * Math.PI * 2;
+    var em = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 8), new THREE.MeshBasicMaterial({ color: 0xb896ff }));
+    em.position.set(Math.cos(a) * 4.66, 0, Math.sin(a) * 4.66);
+    ring.add(em); emitters.push(em);
+  }
+
+  // Émetteur ventral et anneaux
+  var under = new THREE.Mesh(new THREE.CircleGeometry(0.8, 64), new THREE.MeshBasicMaterial({ color: 0xd8c6ff, side: THREE.DoubleSide }));
+  under.rotation.x = Math.PI / 2; under.position.y = -0.905; craft.add(under);
+  [[1.6, -0.815], [2.6, -0.69], [3.6, -0.46]].forEach(function (rr) {
+    var t = new THREE.Mesh(new THREE.TorusGeometry(rr[0], 0.012, 6, 128), new THREE.MeshBasicMaterial({ color: 0x6d58a8 }));
+    t.rotation.x = Math.PI / 2; t.position.y = rr[1] - 0.005; craft.add(t);
+  });
+
+  // Faisceau
+  var bc = document.createElement("canvas"); bc.width = 4; bc.height = 128;
+  var bx = bc.getContext("2d"), grd = bx.createLinearGradient(0, 0, 0, 128);
+  grd.addColorStop(0, "#000"); grd.addColorStop(0.6, "#555"); grd.addColorStop(1, "#fff");
+  bx.fillStyle = grd; bx.fillRect(0, 0, 4, 128);
+  var beam = new THREE.Mesh(new THREE.ConeGeometry(2.8, 9, 48, 1, true),
+    new THREE.MeshBasicMaterial({ color: 0xb896ff, alphaMap: new THREE.CanvasTexture(bc), transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  beam.position.y = -0.9 - 4.5; beam.visible = false; craft.add(beam);
+
+  // Pieds
+  var legs = new THREE.Group(); legs.visible = false; craft.add(legs);
+  var legMat = new THREE.MeshStandardMaterial({ color: 0x8a8f9c, metalness: 0.9, roughness: 0.35 });
+  for (var l = 0; l < 3; l++) {
+    var la = (l / 3) * Math.PI * 2 + Math.PI / 2;
+    var top = new THREE.Vector3(Math.cos(la) * 2.5, -0.7, Math.sin(la) * 2.5);
+    var bot = new THREE.Vector3(Math.cos(la) * 3.0, -1.45, Math.sin(la) * 3.0);
+    var len = top.distanceTo(bot);
+    var strut = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, len, 12), legMat);
+    strut.position.copy(top).add(bot).multiplyScalar(0.5);
+    strut.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), bot.clone().sub(top).normalize());
+    legs.add(strut);
+    var pad = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.06, 24), legMat);
+    pad.position.copy(bot); legs.add(pad);
+  }
+
+  // Ombre au sol
+  var sc = document.createElement("canvas"); sc.width = sc.height = 128;
+  var sx = sc.getContext("2d"), sgr = sx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  sgr.addColorStop(0, "rgba(0,0,0,0.55)"); sgr.addColorStop(1, "rgba(0,0,0,0)");
+  sx.fillStyle = sgr; sx.fillRect(0, 0, 128, 128);
+  var shadow = new THREE.Mesh(new THREE.PlaneGeometry(12, 12), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false }));
+  shadow.rotation.x = -Math.PI / 2; shadow.position.y = -1.48; scene.add(shadow);
+  var groundGlow = new THREE.Mesh(new THREE.CircleGeometry(2.8, 48), new THREE.MeshBasicMaterial({ color: 0xb896ff, transparent: true, opacity: 0.0, blending: THREE.AdditiveBlending, depthWrite: false }));
+  groundGlow.rotation.x = -Math.PI / 2; groundGlow.position.y = -1.47; scene.add(groundGlow);
+
+  // Caméra orbitale
+  var theta = 0.6, phi = 1.28, dist = 23, auto = !reduce, idleUntil = 0;
+  function placeCam() {
+    camera.position.set(dist * Math.sin(phi) * Math.cos(theta), dist * Math.cos(phi) + 0.2, dist * Math.sin(phi) * Math.sin(theta));
+    camera.lookAt(0, 0.1, 0);
+  }
+  var dragging = false, lx = 0, ly = 0;
+  host.addEventListener("pointerdown", function (ev) { dragging = true; lx = ev.clientX; ly = ev.clientY; host.setPointerCapture(ev.pointerId); });
+  host.addEventListener("pointermove", function (ev) {
+    if (!dragging) return;
+    theta += (ev.clientX - lx) * 0.008; phi = Math.min(2.2, Math.max(0.5, phi - (ev.clientY - ly) * 0.006));
+    lx = ev.clientX; ly = ev.clientY; idleUntil = performance.now() + 4000;
+  });
+  function endDrag() { dragging = false; }
+  host.addEventListener("pointerup", endDrag); host.addEventListener("pointercancel", endDrag);
+
+  function toggle(id, cb) {
+    var b = document.getElementById(id);
+    b.addEventListener("click", function () { var on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", String(on)); cb(on); });
+  }
+  var ringOn = true;
+  toggle("t-ring", function (on) { ringOn = on; });
+  toggle("t-beam", function (on) { beam.visible = on; groundGlow.material.opacity = on ? 0.18 : 0; });
+  toggle("t-legs", function (on) { legs.visible = on; });
+
+  function resize() {
+    var w = host.clientWidth, h = host.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    renderer.domElement.style.width = w + "px"; renderer.domElement.style.height = h + "px";
+    camera.aspect = w / h;
+    dist = w / h < 1.5 ? 27 : 23;
+    camera.updateProjectionMatrix();
+  }
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(host); else window.addEventListener("resize", resize);
+  resize();
+
+  var dim = new THREE.Color(0x2a2244), hot = new THREE.Color(0xf2ecff), tmp = new THREE.Color();
+  function frame(now) {
+    var t = now / 1000;
+    if (auto && now > idleUntil && !dragging) theta += 0.0025;
+    placeCam();
+    var lift = legs.visible ? 0 : (reduce ? 0.35 : 0.35 + Math.sin(t * 1.3) * 0.08);
+    craft.position.y = lift;
+    shadow.material.opacity = legs.visible ? 1 : 0.7;
+    var head = (t * 6) % 24;
+    for (var i = 0; i < emitters.length; i++) {
+      var d = (head - i + 24) % 24, k = ringOn ? Math.max(0.12, Math.exp(-d * 0.45)) : 0.05;
+      emitters[i].material.color.copy(tmp.copy(dim).lerp(hot, reduce && ringOn ? 0.6 : k));
+    }
+    var pulse = 0.75 + 0.25 * Math.sin(t * (beam.visible ? 6 : 2.2));
+    under.material.color.copy(tmp.set(0x8a64ff).lerp(hot, beam.visible ? 0.9 : pulse * 0.6));
+    coreGlow.material.opacity = 0.35 + 0.25 * pulse;
+    band.material.opacity = 0.55 + 0.35 * pulse;
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // --- Démonstration du rayon pilotable ---
+  (function () {
+    var host2 = document.getElementById("laserView");
+    if (!host2) return;
+    var r2;
+    try { r2 = new THREE.WebGLRenderer({ antialias: true, alpha: true }); }
+    catch (e) { document.getElementById("laser-fallback").hidden = false; return; }
+    r2.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    r2.outputEncoding = THREE.sRGBEncoding; r2.toneMapping = THREE.ACESFilmicToneMapping; r2.toneMappingExposure = 1.1;
+    host2.appendChild(r2.domElement);
+    var s2 = new THREE.Scene();
+    s2.environment = new THREE.PMREMGenerator(r2).fromScene(env, 0.03).texture;
+    s2.add(new THREE.HemisphereLight(0x8890c0, 0x201814, 0.5));
+    var mo = new THREE.DirectionalLight(0xdfe6ff, 1.0); mo.position.set(6, 12, 8); s2.add(mo);
+    var cam2 = new THREE.PerspectiveCamera(34, 16 / 9, 0.1, 400);
+    var ALT = 9, DEG = Math.PI / 180, L = 30;
+    var c2 = craft.clone(); c2.position.y = ALT; s2.add(c2);
+
+    // Sol : grille qui s'efface vers les bords
+    var gcv = document.createElement("canvas"); gcv.width = gcv.height = 512;
+    var gx2 = gcv.getContext("2d");
+    gx2.fillStyle = "#14121c"; gx2.fillRect(0, 0, 512, 512);
+    gx2.strokeStyle = "rgba(155,162,191,0.16)"; gx2.lineWidth = 1;
+    for (var gi = 0; gi <= 512; gi += 32) { gx2.beginPath(); gx2.moveTo(gi, 0); gx2.lineTo(gi, 512); gx2.stroke(); gx2.beginPath(); gx2.moveTo(0, gi); gx2.lineTo(512, gi); gx2.stroke(); }
+    gx2.globalCompositeOperation = "destination-in";
+    var gm = gx2.createRadialGradient(256, 256, 0, 256, 256, 256); gm.addColorStop(0, "rgba(0,0,0,1)"); gm.addColorStop(1, "rgba(0,0,0,0)");
+    gx2.fillStyle = gm; gx2.fillRect(0, 0, 512, 512);
+    var gtex2 = new THREE.CanvasTexture(gcv); gtex2.encoding = THREE.sRGBEncoding;
+    var ground = new THREE.Mesh(new THREE.PlaneGeometry(70, 70), new THREE.MeshBasicMaterial({ map: gtex2, transparent: true, depthWrite: false, toneMapped: false }));
+    ground.rotation.x = -Math.PI / 2; s2.add(ground);
+
+    function fadeTex(opaqueAtV0) {
+      var cv = document.createElement("canvas"); cv.width = 4; cv.height = 128;
+      var cx = cv.getContext("2d"), g = cx.createLinearGradient(0, 0, 0, 128);
+      g.addColorStop(0, opaqueAtV0 ? "#000" : "#fff"); g.addColorStop(0.45, "#777"); g.addColorStop(1, opaqueAtV0 ? "#fff" : "#000");
+      cx.fillStyle = g; cx.fillRect(0, 0, 4, 128);
+      return new THREE.CanvasTexture(cv);
+    }
+    var texA = fadeTex(true), texB = fadeTex(false);
+    function bmat(tex) { return new THREE.MeshBasicMaterial({ color: 0xffffff, alphaMap: tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }); }
+
+    // Tourelle
+    var lensMat = new THREE.MeshBasicMaterial({ color: 0xff3b3b });
+    var lens = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 12), lensMat); lens.position.y = -0.98; c2.add(lens);
+    var pivot = new THREE.Group(); pivot.position.y = -0.98; pivot.rotation.order = "YXZ"; c2.add(pivot);
+
+    // Formes
+    function tube(r) { var g = new THREE.CylinderGeometry(r, r, L, 16, 1, true); g.rotateX(Math.PI / 2); g.translate(0, 0, L / 2); return g; }
+    var mCore = bmat(texA), mGlow = bmat(texA), mCone = bmat(texB), mFan = bmat(texA);
+    var laser = new THREE.Group();
+    laser.add(new THREE.Mesh(tube(0.05), mCore)); laser.add(new THREE.Mesh(tube(0.24), mGlow));
+    var coneLen = L * 0.6, coneR = 3.2;
+    var cg2 = new THREE.ConeGeometry(coneR, coneLen, 48, 1, true); cg2.rotateX(-Math.PI / 2); cg2.translate(0, 0, coneLen / 2);
+    var cone = new THREE.Mesh(cg2, mCone);
+    var fanLen = L * 0.7, fanTan = Math.tan(25 * DEG);
+    var fg = new THREE.BufferGeometry();
+    fg.setAttribute("position", new THREE.Float32BufferAttribute([0, 0, 0, -fanLen * fanTan, 0, fanLen, fanLen * fanTan, 0, fanLen], 3));
+    fg.setAttribute("uv", new THREE.Float32BufferAttribute([0.5, 0, 0, 1, 1, 1], 2));
+    var fan = new THREE.Mesh(fg, mFan);
+    pivot.add(laser); pivot.add(cone); pivot.add(fan);
+    var shapes = { laser: laser, cone: cone, fan: fan };
+    var reachOf = { laser: L, cone: coneLen, fan: fanLen };
+
+    // Tache au sol
+    var scv = document.createElement("canvas"); scv.width = scv.height = 128;
+    var sx2 = scv.getContext("2d"), sg2 = sx2.createRadialGradient(64, 64, 0, 64, 64, 64);
+    sg2.addColorStop(0, "rgba(255,255,255,1)"); sg2.addColorStop(0.35, "rgba(255,255,255,0.55)"); sg2.addColorStop(1, "rgba(255,255,255,0)");
+    sx2.fillStyle = sg2; sx2.fillRect(0, 0, 128, 128);
+    var spotMat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(scv), color: 0xff3b3b, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
+    var spotGroup = new THREE.Group(); s2.add(spotGroup);
+    var spot = new THREE.Mesh(new THREE.CircleGeometry(1, 48), spotMat); spot.rotation.x = -Math.PI / 2; spot.position.y = 0.03; spotGroup.add(spot);
+
+    // Réglages
+    var st = { shape: "laser", color: "#ff3b3b", power: 70, az: -60, el: 55, mode: "fixe" };
+    function apply() {
+      for (var k in shapes) shapes[k].visible = k === st.shape;
+      [mCore, mGlow, mCone, mFan, spotMat, lensMat].forEach(function (m) { m.color.set(st.color); });
+      mCore.color.lerp(new THREE.Color(0xffffff), 0.4);
+    }
+    Array.prototype.forEach.call(document.querySelectorAll(".laser-panel .seg[data-group]"), function (seg) {
+      seg.addEventListener("click", function (ev) {
+        var b = ev.target.closest("button"); if (!b) return;
+        Array.prototype.forEach.call(seg.querySelectorAll("button"), function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        st[seg.dataset.group] = b.dataset.v; apply();
+      });
+    });
+    [["l-power", "power", "o-power", " %"], ["l-az", "az", "o-az", "°"], ["l-el", "el", "o-el", "°"]].forEach(function (d) {
+      var inp = document.getElementById(d[0]), out = document.getElementById(d[2]);
+      inp.addEventListener("input", function () { st[d[1]] = +inp.value; out.textContent = inp.value + d[3]; });
+    });
+    apply();
+
+    // Caméra
+    var th2 = 0.9, idle2 = 0, drag2 = false, lx2 = 0;
+    host2.addEventListener("pointerdown", function (ev) { drag2 = true; lx2 = ev.clientX; host2.setPointerCapture(ev.pointerId); });
+    host2.addEventListener("pointermove", function (ev) { if (!drag2) return; th2 += (ev.clientX - lx2) * 0.008; lx2 = ev.clientX; idle2 = performance.now() + 4000; });
+    host2.addEventListener("pointerup", function () { drag2 = false; });
+    host2.addEventListener("pointercancel", function () { drag2 = false; });
+    var dist2 = 34;
+    function resize2() {
+      var w = host2.clientWidth, h = host2.clientHeight; if (!w || !h) return;
+      r2.setSize(w, h, false); r2.domElement.style.width = w + "px"; r2.domElement.style.height = h + "px";
+      cam2.aspect = w / h; dist2 = w / h < 1.5 ? 42 : 34; cam2.updateProjectionMatrix();
+    }
+    if (window.ResizeObserver) new ResizeObserver(resize2).observe(host2); else window.addEventListener("resize", resize2);
+    resize2();
+
+    var wp = new THREE.Vector3(), wq = new THREE.Quaternion(), dir = new THREE.Vector3(), readEl = document.getElementById("laserRead"), fc = 0;
+    function f2(now) {
+      var t = now / 1000;
+      if (!reduce && !drag2 && now > idle2) th2 += 0.0012;
+      cam2.position.set(Math.cos(th2) * dist2, 12, Math.sin(th2) * dist2); cam2.lookAt(0, 3.2, 0);
+      c2.position.y = ALT + (reduce ? 0 : Math.sin(t * 1.3) * 0.06);
+      var az = st.az * DEG; if (st.mode === "sweep") az += Math.sin(t * 0.9) * 0.75;
+      pivot.rotation.y = az; pivot.rotation.x = st.el * DEG;
+      var pw = st.power / 100;
+      var k = st.mode === "pulse" ? (0.25 + 0.75 * (0.5 + 0.5 * Math.sin(t * 10))) : 1;
+      var len = 0.45 + 0.55 * pw;
+      mCore.opacity = Math.min(1, 1.2 * pw) * k; mGlow.opacity = 0.35 * pw * k; mCone.opacity = 0.32 * pw * k; mFan.opacity = 0.4 * pw * k;
+      // Point d'impact
+      c2.updateMatrixWorld(true);
+      pivot.getWorldPosition(wp); pivot.getWorldQuaternion(wq);
+      dir.set(0, 0, 1).applyQuaternion(wq);
+      var reach = reachOf[st.shape] * len, hit = dir.y < -0.01 ? -wp.y / dir.y : Infinity;
+      var zs = Math.min(len, hit / reachOf[st.shape]), wsc = st.shape === "laser" ? 0.6 + 0.6 * pw : 1;
+      shapes[st.shape].scale.set(wsc, wsc, zs);
+      var sinEl = Math.max(0.2, Math.sin(st.el * DEG));
+      if (hit < reach * 0.98) {
+        spotGroup.visible = true;
+        spotGroup.position.set(wp.x + dir.x * hit, 0, wp.z + dir.z * hit);
+        spotGroup.rotation.y = az;
+        var rr = st.shape === "laser" ? 0.75 : st.shape === "cone" ? hit * (coneR / coneLen) : hit * fanTan;
+        var along = st.shape === "fan" ? 0.7 : rr;
+        spot.scale.set(rr, along / sinEl, 1);
+        spotMat.opacity = (0.35 + 0.65 * pw) * k;
+      } else spotGroup.visible = false;
+      if (++fc % 12 === 0) {
+        readEl.textContent = spotGroup.visible ? "Impact au sol à " + hit.toFixed(1).replace(".", ",") + " m" : "Rayon trop court pour toucher le sol";
+      }
+      r2.render(s2, cam2);
+      requestAnimationFrame(f2);
+    }
+    requestAnimationFrame(f2);
+  })();
+})();
+</script>
